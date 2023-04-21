@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import Pokemons from './components/Pokemons.vue'
 </script>
 
 <template>
-  <h1>PokeAPI</h1>
+  <Pokemons />
 </template>
 
 <style scoped>
