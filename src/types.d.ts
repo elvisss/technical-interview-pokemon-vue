@@ -12,3 +12,7 @@ export interface Pokemon {
   height: number
   weight: number
 }
+
+export type SortField = keyof Pokemon
+
+export type SortType = 'ascending' | 'descending' | 'none'

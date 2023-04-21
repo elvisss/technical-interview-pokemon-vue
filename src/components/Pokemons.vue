@@ -18,15 +18,15 @@
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>URL</th>
-            <th>Height</th>
-            <th>Weight</th>
+            <Sort @sorting="(newState) => sortPokemons(newState, 'id')" field="id" />
+            <Sort @sorting="(newState) => sortPokemons(newState, 'name')" field="name" />
+            <Sort @sorting="(newState) => sortPokemons(newState, 'url')" field="url" />
+            <Sort @sorting="(newState) => sortPokemons(newState, 'height')" field="height" />
+            <Sort @sorting="(newState) => sortPokemons(newState, 'weight')" field="weight" />
           </tr>
         </thead>
         <tbody>
-          <tr v-for="pokemon in pokemons" :key="pokemon.name">
+          <tr v-for="pokemon in pokemons" :key="pokemon.id">
             <td>{{ pokemon.id }}</td>
             <td>{{ pokemon.name }}</td>
             <td>{{ pokemon.url }}</td>
@@ -42,15 +42,18 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { usePokemon } from '../composables/usePokemon'
+import Sort from './Sort.vue'
 
 export default defineComponent({
+  components: { Sort },
   setup() {
-    const { pokemons, isLoading, isError } = usePokemon()
+    const { pokemons, isLoading, isError, sortPokemons } = usePokemon()
 
     return {
       pokemons,
       isLoading,
       isError,
+      sortPokemons,
     }
   },
 })

@@ -1,10 +1,12 @@
 import { ref } from 'vue'
 import type { Pokemon } from '../types'
 import { getPokemon, getPokemons } from '../services/pokemon'
+import type { SortType } from '../types'
+import type { SortField } from '../types'
 
 export const usePokemon = () => {
-  // const initialPokemons = ref<Array<Pokemon>>([])
   const pokemons = ref<Array<Pokemon>>([])
+  const sortedPokemons = ref<Array<Pokemon>>([])
   const isLoading = ref<boolean>(true)
   const isError = ref<boolean>(false)
 
@@ -18,7 +20,7 @@ export const usePokemon = () => {
         promises.push(getPokemon(pokemon.url))
       })
 
-      const allPokemons: Pokemon[] = await Promise.all(promises)
+      const allPokemons = await Promise.all<Pokemon[]>(promises)
 
       const mergePokemons = initialPokemons.map((pokemon, index) => {
         return {
@@ -30,6 +32,7 @@ export const usePokemon = () => {
       })
 
       pokemons.value = mergePokemons
+      sortedPokemons.value = mergePokemons
     } catch (err) {
       isError.value = true
     } finally {
@@ -37,11 +40,43 @@ export const usePokemon = () => {
     }
   }
 
+  const sortPokemons = (sortType: SortType, field: SortField) => {
+    if (sortType === 'none') {
+      sortedPokemons.value = [...pokemons.value]
+      return
+    }
+
+    const clonedPokemons = [...pokemons.value]
+
+    clonedPokemons.sort((a: Pokemon, b: Pokemon) => {
+      if (sortType === 'descending') {
+        if (a[field] > b[field]) {
+          return -1
+        }
+        if (a[field] < b[field]) {
+          return 1
+        }
+      }
+      if (sortType === 'ascending') {
+        if (a[field] > b[field]) {
+          return 1
+        }
+        if (a[field] < b[field]) {
+          return -1
+        }
+      }
+      return 0
+    })
+
+    sortedPokemons.value = clonedPokemons
+  }
+
   fetchPokemons()
 
   return {
-    pokemons,
+    pokemons: sortedPokemons,
     isLoading,
     isError,
+    sortPokemons,
   }
 }
